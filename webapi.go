@@ -38,6 +38,10 @@ type Signup struct {
 	Pass  string `json:"pass" bson:"pass" binding:"required"`
 	Promo string `json:"promo" bson:"promo" binding:"required"`
 }
+type Signin struct {
+	Name string `json:"name" binding:"required"`
+	Pass string `json:"pass" binding:"required"`
+}
 
 type App struct {
 	g  *gin.Engine
@@ -57,6 +61,7 @@ func main() {
 	userAPI := router.Group("/user")
 	{
 		userAPI.POST("/signup", app.signup)
+		userAPI.POST("/signin", app.signin)
 	}
 
 	router.Run(":8080")
@@ -68,7 +73,7 @@ func (app *App) signup(c *gin.Context) {
 	err := c.Bind(&signup)
 	if !err {
 		// Check required bindings
-		c.JSON(400, gin.H{"code": 400, "msg": "Params are Required"})
+		c.JSON(400, gin.H{"code": 402, "msg": "Params are Required"})
 	} else {
 		// Check promo code
 		var promo Promo
@@ -106,17 +111,43 @@ func (app *App) signup(c *gin.Context) {
 			c.JSON(400, gin.H{"code": 401, "msg": "Already Exist"})
 		}
 	}
-	//if c.Bind(&json) {
-	//}
 }
 
+func (app *App) signin(c *gin.Context) {
+	var signin Signin
+	err := c.Bind(&signin)
+	if !err {
+		c.JSON(400, gin.H{"code": 402, "msg": "Not enough params!"})
+		return
+	}
+	var user User
+	app.db.C("user").Find(bson.M{"$or": []bson.M{
+		{"name": signin.Name},
+		{"mail": signin.Name},
+	}}).One(&user)
+	fmt.Println(signin)
+	if user.Name == "" {
+		c.JSON(400, gin.H{"code": 400, "msg": "No such user"})
+		return
+	}
+	if genMd5(user.Salt+signin.Pass) != user.Pass {
+		c.JSON(200, gin.H{"code": 401, "msg": "wrong password"})
+		return
+	}
+	c.JSON(200, gin.H{"code": 200, "msg": "OK", "user": gin.H{
+		"name":   user.Name,
+		"mail":   user.Mail,
+		"coins":  user.Coins,
+		"spells": user.Spells,
+		"votes":  user.Votes,
+	}})
+}
+
+// Helper funcs
 func genSalt(name string) string {
 	return genMd5(name)[:8]
 }
 func genMd5(txt string) string {
-	//return fmt.Sprintf("%x", md5.Sum([]byte(name)))
-	//m := md5.Sum([]byte(name))
-	//return string(m[:])
 	hasher := md5.New()
 	hasher.Write([]byte(txt))
 	return hex.EncodeToString(hasher.Sum(nil))
