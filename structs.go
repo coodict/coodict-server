@@ -31,3 +31,25 @@ type Signin struct {
 	Name string `json:"name" binding:"required"`
 	Pass string `json:"pass" binding:"required"`
 }
+
+type SpellCrt struct {
+	Lang   string `json:"mode" binding: "required"`
+	Spell  string `json:"spell" binding: "required"`
+	Status int8   `json:"status" binding: "required"`
+}
+type Spell struct {
+	Name      string `bson:"name"`
+	Content   string `bson:"content"`
+	Lang      string `bson:"lang"`
+	Len       int8   `bson:"len"`
+	Owner     string `bson:"owner"`
+	Status    int8   `bson:"status"`
+	Timestamp int64  `bson:"timestamp"`
+	IsFork    bool   `bson:"isfork"`
+	From      string `bson:"from"`
+	Votes     int8   `bson:"votes"`
+	Share     int8   `bson:"shares"`
+	Comms     int8   `bson:"comms"`
+	Forks     int8   `bson:"forks"`
+	Views     int32  `bson:"views"`
+}

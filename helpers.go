@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 var mySigningKey = "AVATQ!#@$#^%ASBA1354"
@@ -41,4 +42,18 @@ func genUsrToken(u User) (string, error) {
 	tokenString, err := token.SignedString([]byte(mySigningKey))
 
 	return tokenString, err
+}
+
+// Middleware auth
+func Auth(secret string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token, err := jwt.ParseFromRequest(c.Request, func(token *jwt.Token) (interface{}, error) {
+			b := ([]byte(secret))
+			return b, nil
+		})
+		if err != nil {
+			c.JSON(200, gin.H{"code": 403, "msg": err.Error()})
+		}
+		c.Set("token", token)
+	}
 }

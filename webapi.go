@@ -44,5 +44,10 @@ func main() {
 		userAPI.POST("/signup", app.signup)
 		userAPI.POST("/signin", app.signin)
 	}
+	spellAPI := router.Group("/spell")
+	spellAPI.Use(Auth(mySigningKey))
+	{
+		spellAPI.POST("/create", app.createSpell)
+	}
 	router.Run(":8080")
 }
