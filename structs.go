@@ -4,6 +4,8 @@ rainy @ 2015-06-08 <me@rainy.im>
 */
 package main
 
+import "gopkg.in/mgo.v2/bson"
+
 type User struct {
 	Name       string `json:"name" bson:"name"`
 	Mail       string `bson: "mail" json:"mail"`
@@ -37,19 +39,23 @@ type SpellCrt struct {
 	Spell  string `json:"spell" binding: "required"`
 	Status int8   `json:"status" binding: "required"`
 }
+type SpellFetch struct {
+	ID bson.ObjectId `json:"id" binding:"required"`
+}
 type Spell struct {
-	Name      string `bson:"name"`
-	Content   string `bson:"content"`
-	Lang      string `bson:"lang"`
-	Len       int8   `bson:"len"`
-	Owner     string `bson:"owner"`
-	Status    int8   `bson:"status"`
-	Timestamp int64  `bson:"timestamp"`
-	IsFork    bool   `bson:"isfork"`
-	From      string `bson:"from"`
-	Votes     int8   `bson:"votes"`
-	Share     int8   `bson:"shares"`
-	Comms     int8   `bson:"comms"`
-	Forks     int8   `bson:"forks"`
-	Views     int32  `bson:"views"`
+	ID        bson.ObjectId `json:"_id" bson:"_id"`
+	Name      string        `json:"name" bson:"name"`
+	Content   string        `json:"content" bson:"content"`
+	Lang      string        `json:"mode" bson:"lang"`
+	Len       int8          `json:"len" bson:"len"`
+	Owner     string        `json:"owner" bson:"owner"`
+	Status    int8          `json:"status" bson:"status"`
+	Timestamp int64         `json:"timestamp" bson:"timestamp"`
+	IsFork    bool          `json:"isfork" bson:"isfork"`
+	From      string        `json:"from" bson:"from"`
+	Votes     int8          `json:"votes" bson:"votes"`
+	Share     int8          `json:"shares" bson:"shares"`
+	Comms     int8          `json:"comms" bson:"comms"`
+	Forks     int8          `json:"forks" bson:"forks"`
+	Views     int32         `json:"views" bson:"views"`
 }

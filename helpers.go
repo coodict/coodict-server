@@ -53,7 +53,21 @@ func Auth(secret string) gin.HandlerFunc {
 		})
 		if err != nil {
 			c.JSON(200, gin.H{"code": 403, "msg": err.Error()})
+			c.Abort()
+		} else {
+			c.Set("token", token)
 		}
-		c.Set("token", token)
 	}
+}
+
+// Valid user
+func getUserFromToken(secret string, c *gin.Context) string {
+	token, err := jwt.ParseFromRequest(c.Request, func(token *jwt.Token) (interface{}, error) {
+		b := ([]byte(secret))
+		return b, nil
+	})
+	if err != nil {
+		return ""
+	}
+	return token.Claims["name"].(string)
 }
