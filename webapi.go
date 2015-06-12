@@ -38,6 +38,7 @@ func main() {
 	defer sess.Close()
 	app := &App{g: router, db: sess.DB("cobble")}
 
+	router.Static("/brace/mode", "./brace/mode/")
 	userAPI := router.Group("/user")
 	{
 		userAPI.POST("/signup", app.signup)
