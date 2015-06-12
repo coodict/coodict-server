@@ -20,6 +20,16 @@ type App struct {
 
 func main() {
 	router := gin.Default()
+	router.Use(func(c *gin.Context) {
+		// Run this on all requests
+		// Should be moved to a proper middleware
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+		c.Next()
+	})
+	router.OPTIONS("/*cors", func(c *gin.Context) {
+		// Empty 200 response
+	})
 	sess, err := mgo.Dial(MOGODB_URI)
 	if err != nil {
 		fmt.Printf("Can't connect to mongo, go error %v\n", err)

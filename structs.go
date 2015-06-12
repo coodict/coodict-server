@@ -5,16 +5,17 @@ rainy @ 2015-06-08 <me@rainy.im>
 package main
 
 type User struct {
-	Name    string `json:"name" bson:"name"`
-	Mail    string `bson: "mail" json:"mail"`
-	Avat    string `bson: "avat" json:"avat"`
-	Salt    string `bson: "salt" json:"salt"`
-	Pass    string `bson: "pass" json:"pass"`
-	Coins   int    `bson: "coins" json:"coins"`
-	Spells  int    `bson: "spells" json:"spells"`
-	Votes   int    `bson: "votes" json:"votes"`
-	IsThird bool   `bson: "isThird" json:"isThird"`
-	OpenID  string `bson: "openID" json:"openID"`
+	Name       string `json:"name" bson:"name"`
+	Mail       string `bson: "mail" json:"mail"`
+	Avat       string `bson: "avat" json:"avat"`
+	Salt       string `bson: "salt" json:"salt"`
+	Pass       string `bson: "pass" json:"pass"`
+	Coins      int    `bson: "coins" json:"coins"`
+	Spells     int    `bson: "spells" json:"spells"`
+	Votes      int    `bson: "votes" json:"votes"`
+	IsThird    bool   `bson: "isThird" json:"isThird"`
+	OpenID     string `bson: "openID" json:"openID"`
+	CreateDate string `bson: "createDate" json:"createDate"`
 }
 type Promo struct {
 	Code   string `json:"code" bson:"code"`

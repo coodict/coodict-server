@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/mgo.v2/bson"
@@ -17,42 +18,40 @@ func (app *App) signup(c *gin.Context) {
 	err := c.Bind(&signup)
 	if !err {
 		// Check required bindings
-		c.JSON(400, gin.H{"code": 402, "msg": "Params are Required"})
+		c.JSON(200, gin.H{"code": 402, "msg": "Params are Required"})
 	} else {
 		// Check promo code
 		var promo Promo
 		app.db.C("promo").Find(bson.M{"code": signup.Promo, "isused": 0}).One(&promo)
 		if promo.Code == "" {
-			c.JSON(400, gin.H{"code": 400, "msg": "Promocode not available"})
+			c.JSON(200, gin.H{"code": 400, "msg": "Promocode not available"})
 			return
 		}
 		app.db.C("user").Find(bson.M{"$or": []bson.M{{"name": signup.Name}, {"mail": signup.Mail}}}).One(&user)
 		if user.Name == "" {
 			// Create a new user
 			salt := genSalt(signup.Name)
+			d := time.Now().Local()
+
 			u := User{
-				Name:   signup.Name,
-				Mail:   signup.Mail,
-				Salt:   salt,
-				Pass:   genMd5(salt + signup.Pass),
-				Coins:  100,
-				Spells: 0,
-				Votes:  0,
+				Name:       signup.Name,
+				Mail:       signup.Mail,
+				Salt:       salt,
+				Pass:       genMd5(salt + signup.Pass),
+				Coins:      100,
+				Spells:     0,
+				Votes:      0,
+				CreateDate: fmt.Sprintf("%d-%d-%d", d.Year(), d.Month(), d.Day()),
 			}
 			err := app.db.C("user").Insert(u)
 			if err != nil {
-				c.JSON(500, gin.H{"code": 500, "msg": "Our fault"})
+				c.JSON(200, gin.H{"code": 500, "msg": "Our fault"})
 				return
 			}
-			c.JSON(200, gin.H{"code": 200, "msg": "OK", "user": gin.H{
-				"name":   u.Name,
-				"mail":   u.Mail,
-				"coins":  u.Coins,
-				"spells": u.Spells,
-				"votes":  u.Votes,
-			}})
+			tokenString, _ := genUsrToken(u)
+			c.JSON(200, gin.H{"code": 200, "msg": "OK", "jwt": tokenString})
 		} else {
-			c.JSON(400, gin.H{"code": 401, "msg": "Already Exist"})
+			c.JSON(200, gin.H{"code": 401, "msg": "Already Exist"})
 		}
 	}
 }
@@ -69,7 +68,7 @@ func (app *App) signin(c *gin.Context) {
 		{"name": signin.Name},
 		{"mail": signin.Name},
 	}}).One(&user)
-	fmt.Println(signin)
+	fmt.Println(user)
 	if user.Name == "" {
 		c.JSON(400, gin.H{"code": 400, "msg": "No such user"})
 		return
@@ -78,11 +77,6 @@ func (app *App) signin(c *gin.Context) {
 		c.JSON(200, gin.H{"code": 401, "msg": "wrong password"})
 		return
 	}
-	c.JSON(200, gin.H{"code": 200, "msg": "OK", "user": gin.H{
-		"name":   user.Name,
-		"mail":   user.Mail,
-		"coins":  user.Coins,
-		"spells": user.Spells,
-		"votes":  user.Votes,
-	}})
+	tokenString, _ := genUsrToken(user)
+	c.JSON(200, gin.H{"code": 200, "msg": "OK", "jwt": tokenString})
 }
