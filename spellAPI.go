@@ -57,16 +57,41 @@ func (app *App) createSpell(c *gin.Context) {
 }
 func (app *App) fetchSpell(c *gin.Context) {
 	vistor := getUserFromToken(mySigningKey, c)
-	var spellID SpellFetch
-	c.Bind(&spellID)
+	var req SpellFetch
+	c.Bind(&req)
 	var spell Spell
-	err := app.db.C("spell").FindId(spellID.ID).One(&spell)
+	err := app.db.C("spell").FindId(req.ID).One(&spell)
 	if err != nil {
 		c.JSON(200, gin.H{"code": 404, "msg": "404"})
 		return
 	}
 	if spell.Status == 1 && spell.Owner != vistor {
 		c.JSON(200, gin.H{"code": 403, "msg": "主人未公开"})
+		return
 	}
+	app.db.C("spell").UpdateId(req.ID, bson.M{"$inc": bson.M{"views": 1}})
 	c.JSON(200, gin.H{"code": 200, "spell": spell})
+}
+
+func (app *App) deleteSpell(c *gin.Context) {
+	token := c.MustGet("token").(*jwt.Token)
+
+	var req SpellFetch
+	err := c.Bind(&req)
+	if !err {
+		c.JSON(200, gin.H{"code": 400, "msg": "参数错误！"})
+		return
+	}
+	var spell Spell
+	err2 := app.db.C("spell").FindId(req.ID).One(&spell)
+	if err2 != nil {
+		c.JSON(200, gin.H{"code": 404, "msg": "404"})
+		return
+	}
+	if spell.Owner != token.Claims["name"] {
+		c.JSON(200, gin.H{"code": 403, "msg": "不是你的你别管！"})
+		return
+	}
+	app.db.C("spell").UpdateId(req.ID, bson.M{"$set": bson.M{"status": -1}})
+	c.JSON(200, gin.H{"code": 200, "spell": "DELETE"})
 }

@@ -16,6 +16,7 @@ func (app *App) mySpells(c *gin.Context) {
 	var req SpellsOfMine
 	c.Bind(&req)
 	spells := make([]Spell, req.Pgsz)
-	app.db.C("spell").Find(bson.M{"owner": token.Claims["name"]}).Sort("-timestamp").Limit(int(req.Pgsz)).Skip(int(req.Pgsz * (req.Page - 1))).All(&spells)
+	query := bson.M{"owner": token.Claims["name"], "status": bson.M{"$gte": 0}}
+	app.db.C("spell").Find(query).Sort("-timestamp").Limit(int(req.Pgsz)).Skip(int(req.Pgsz * (req.Page - 1))).All(&spells)
 	c.JSON(200, gin.H{"code": 200, "spells": spells})
 }

@@ -54,6 +54,7 @@ func main() {
 	spellAPI.Use(Auth(mySigningKey))
 	{
 		spellAPI.POST("/create", app.createSpell)
+		spellAPI.POST("/delete", app.deleteSpell)
 	}
 	router.POST("/fetchSpell", app.fetchSpell)
 	router.Run(":8080")
