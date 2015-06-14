@@ -35,18 +35,26 @@ type Signin struct {
 }
 
 type SpellCrt struct {
-	Lang   string `json:"mode" binding: "required"`
-	Spell  string `json:"spell" binding: "required"`
-	Status int8   `json:"status" binding: "required"`
+	ID     bson.ObjectId `json:"spellID"`
+	Name   string        `json:"name"`
+	Lang   string        `json:"mode" binding: "required"`
+	Label  string        `json:"label" binding: "required"`
+	Spell  string        `json:"spell" binding: "required"`
+	Status int8          `json:"status" binding: "required"`
 }
 type SpellFetch struct {
 	ID bson.ObjectId `json:"id" binding:"required"`
+}
+type SpellsOfMine struct {
+	Page int8 `json:"page", binding: "required"`
+	Pgsz int8 `json:"pgsz", binding: "required"`
 }
 type Spell struct {
 	ID        bson.ObjectId `json:"_id" bson:"_id"`
 	Name      string        `json:"name" bson:"name"`
 	Content   string        `json:"content" bson:"content"`
-	Lang      string        `json:"mode" bson:"lang"`
+	Lang      string        `json:"mode" bson:"mode"`
+	Label     string        `json:"label" bson:"label"`
 	Len       int8          `json:"len" bson:"len"`
 	Owner     string        `json:"owner" bson:"owner"`
 	Status    int8          `json:"status" bson:"status"`

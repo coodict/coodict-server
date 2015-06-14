@@ -44,11 +44,16 @@ func main() {
 		userAPI.POST("/signup", app.signup)
 		userAPI.POST("/signin", app.signin)
 	}
+	profileAPI := router.Group("/profile")
+	profileAPI.Use(Auth(mySigningKey))
+	{
+		profileAPI.POST("/spells", app.mySpells)
+	}
+
 	spellAPI := router.Group("/spell")
 	spellAPI.Use(Auth(mySigningKey))
 	{
 		spellAPI.POST("/create", app.createSpell)
-
 	}
 	router.POST("/fetchSpell", app.fetchSpell)
 	router.Run(":8080")
