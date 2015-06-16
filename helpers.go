@@ -37,6 +37,7 @@ func genUsrToken(u User) (string, error) {
 	token.Claims["spells"] = u.Spells
 	token.Claims["votes"] = u.Votes
 	token.Claims["date"] = u.CreateDate
+	token.Claims["tags"] = u.Tags
 
 	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	tokenString, err := token.SignedString([]byte(mySigningKey))
