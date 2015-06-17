@@ -15,18 +15,19 @@ type Language struct {
 	Mode  string `json: "Mode" bson: "Mode"`
 }
 type User struct {
-	Name       string `json:"name" bson:"name"`
-	Mail       string `bson: "mail" json:"mail"`
-	Avat       string `bson: "avat" json:"avat"`
-	Salt       string `bson: "salt" json:"salt"`
-	Pass       string `bson: "pass" json:"pass"`
-	Tags       []Tag  `bson: "tags" json:"tags"`
-	Coins      int    `bson: "coins" json:"coins"`
-	Spells     int    `bson: "spells" json:"spells"`
-	Votes      int    `bson: "votes" json:"votes"`
-	IsThird    bool   `bson: "isThird" json:"isThird"`
-	OpenID     string `bson: "openID" json:"openID"`
-	CreateDate string `bson: "createDate" json:"createDate"`
+	Name       string     `json:"name" bson:"name"`
+	Mail       string     `bson: "mail" json:"mail"`
+	Avat       string     `bson: "avat" json:"avat"`
+	Salt       string     `bson: "salt" json:"salt"`
+	Pass       string     `bson: "pass" json:"pass"`
+	Lang       []Language `bson: "langs" json:"langs"`
+	Tags       []Tag      `bson: "tags" json:"tags"`
+	Coins      int        `bson: "coins" json:"coins"`
+	Spells     int        `bson: "spells" json:"spells"`
+	Votes      int        `bson: "votes" json:"votes"`
+	IsThird    bool       `bson: "isThird" json:"isThird"`
+	OpenID     string     `bson: "openID" json:"openID"`
+	CreateDate string     `bson: "createDate" json:"createDate"`
 }
 type Spell struct {
 	ID        bson.ObjectId `json:"_id" bson:"_id"`

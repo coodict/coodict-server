@@ -24,11 +24,18 @@ func (app *App) createSpell(c *gin.Context) {
 		c.JSON(200, gin.H{"code": 400, "msg": "参数错误！"})
 	} else {
 		var spell Spell
+		// Update user metas
+		if len(req.Tags) > 0 {
+			fmt.Println(req.Tags)
+			app.db.C("user").Update(bson.M{"name": token.Claims["name"]}, bson.M{"$addToSet": bson.M{"tags": bson.M{"$each": req.Tags}}})
+		}
+		app.db.C("user").Update(bson.M{"name": token.Claims["name"]}, bson.M{"$addToSet": bson.M{"lang": req.Lang}})
+
 		if req.ID != "" {
 			// Update api
 			app.db.C("spell").FindId(req.ID).One(&spell)
 			if spell.ID != "" {
-				change := bson.M{"$set": bson.M{"name": req.Name, "content": req.Spell, "lang": req.Lang, "status": req.Status, "timestamp": time.Time.Unix(time.Now())}}
+				change := bson.M{"$set": bson.M{"tags": req.Tags, "name": req.Name, "content": req.Spell, "lang": req.Lang, "status": req.Status, "timestamp": time.Time.Unix(time.Now())}}
 				err := app.db.C("spell").UpdateId(req.ID, change)
 				if err != nil {
 					c.JSON(200, gin.H{"code": 500, "msg": "服务器错误，请稍后再试！"})

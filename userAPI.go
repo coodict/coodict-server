@@ -68,7 +68,6 @@ func (app *App) signin(c *gin.Context) {
 		{"name": signin.Name},
 		{"mail": signin.Name},
 	}}).One(&user)
-	fmt.Println(user)
 	if user.Name == "" {
 		c.JSON(200, gin.H{"code": 400, "msg": "用户名不存在！"})
 		return
@@ -78,5 +77,5 @@ func (app *App) signin(c *gin.Context) {
 		return
 	}
 	tokenString, _ := genUsrToken(user)
-	c.JSON(200, gin.H{"code": 200, "msg": "OK", "jwt": tokenString})
+	c.JSON(200, gin.H{"code": 200, "msg": "OK", "jwt": tokenString, "tgs": user.Tags, "las": user.Lang})
 }
