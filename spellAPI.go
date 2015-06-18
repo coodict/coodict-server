@@ -20,6 +20,7 @@ func (app *App) createSpell(c *gin.Context) {
 
 	var req SpellCrt
 	err := c.Bind(&req)
+	fmt.Printf("%+v", req)
 	if !err {
 		c.JSON(200, gin.H{"code": 400, "msg": "参数错误！"})
 	} else {
@@ -29,7 +30,7 @@ func (app *App) createSpell(c *gin.Context) {
 			fmt.Println(req.Tags)
 			app.db.C("user").Update(bson.M{"name": token.Claims["name"]}, bson.M{"$addToSet": bson.M{"tags": bson.M{"$each": req.Tags}}})
 		}
-		app.db.C("user").Update(bson.M{"name": token.Claims["name"]}, bson.M{"$addToSet": bson.M{"lang": req.Lang}})
+		app.db.C("user").Update(bson.M{"name": token.Claims["name"]}, bson.M{"$addToSet": bson.M{"langs": req.Lang}})
 
 		if req.ID != "" {
 			// Update api
@@ -70,12 +71,12 @@ func (app *App) fetchSpell(c *gin.Context) {
 	var req SpellFetch
 	c.Bind(&req)
 	var spell Spell
-	err := app.db.C("spell").Find(bson.M{"_id": req.ID, "status": bson.M{"$ne": -1}}).One(&spell)
+	err := app.db.C("spell").Find(bson.M{"_id": req.ID, "status": bson.M{"$ne": STATUS_DELETE}}).One(&spell)
 	if err != nil {
 		c.JSON(200, gin.H{"code": 404, "msg": "404"})
 		return
 	}
-	if spell.Status == 0 && spell.Owner != vistor {
+	if spell.Status == STATUS_PRIVATE && spell.Owner != vistor {
 		c.JSON(200, gin.H{"code": 403, "msg": "主人未公开"})
 		return
 	}
@@ -102,6 +103,6 @@ func (app *App) deleteSpell(c *gin.Context) {
 		c.JSON(200, gin.H{"code": 403, "msg": "不是你的你别管！"})
 		return
 	}
-	app.db.C("spell").UpdateId(req.ID, bson.M{"$set": bson.M{"status": -1}})
+	app.db.C("spell").UpdateId(req.ID, bson.M{"$set": bson.M{"status": STATUS_DELETE}})
 	c.JSON(200, gin.H{"code": 200, "spell": "DELETE"})
 }

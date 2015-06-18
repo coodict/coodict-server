@@ -77,5 +77,5 @@ func (app *App) signin(c *gin.Context) {
 		return
 	}
 	tokenString, _ := genUsrToken(user)
-	c.JSON(200, gin.H{"code": 200, "msg": "OK", "jwt": tokenString, "tgs": user.Tags, "las": user.Lang})
+	c.JSON(200, gin.H{"code": 200, "msg": "OK", "jwt": tokenString, "tgs": user.Tags, "lgs": user.Lang})
 }

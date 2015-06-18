@@ -6,35 +6,41 @@ package main
 
 import "gopkg.in/mgo.v2/bson"
 
+var (
+	STATUS_PUBLIC  int8 = 1
+	STATUS_PRIVATE int8 = 2
+	STATUS_DELETE  int8 = 3
+)
+
 type Tag struct {
-	Value string `json: "value" bson: "value"`
-	Label string `json: "label" bson: "label"`
+	Value string `json:"value" bson:"value"`
+	Label string `json:"label" bson:"label"`
 }
 type Language struct {
-	Label string `json: "Label" bson: "Label"`
-	Mode  string `json: "Mode" bson: "Mode"`
+	Label string `json:"label" bson:"label"`
+	Mode  string `json:"mode" bson:"mode"`
 }
 type User struct {
 	Name       string     `json:"name" bson:"name"`
-	Mail       string     `bson: "mail" json:"mail"`
-	Avat       string     `bson: "avat" json:"avat"`
-	Salt       string     `bson: "salt" json:"salt"`
-	Pass       string     `bson: "pass" json:"pass"`
-	Lang       []Language `bson: "langs" json:"langs"`
-	Tags       []Tag      `bson: "tags" json:"tags"`
-	Coins      int        `bson: "coins" json:"coins"`
-	Spells     int        `bson: "spells" json:"spells"`
-	Votes      int        `bson: "votes" json:"votes"`
-	IsThird    bool       `bson: "isThird" json:"isThird"`
-	OpenID     string     `bson: "openID" json:"openID"`
-	CreateDate string     `bson: "createDate" json:"createDate"`
+	Mail       string     `bson:"mail" json:"mail"`
+	Avat       string     `bson:"avat" json:"avat"`
+	Salt       string     `bson:"salt" json:"salt"`
+	Pass       string     `bson:"pass" json:"pass"`
+	Lang       []Language `bson:"langs" json:"langs"`
+	Tags       []Tag      `bson:"tags" json:"tags"`
+	Coins      int        `bson:"coins" json:"coins"`
+	Spells     int        `bson:"spells" json:"spells"`
+	Votes      int        `bson:"votes" json:"votes"`
+	IsThird    bool       `bson:"isThird" json:"isThird"`
+	OpenID     string     `bson:"openID" json:"openID"`
+	CreateDate string     `bson:"createDate" json:"createDate"`
 }
 type Spell struct {
 	ID        bson.ObjectId `json:"_id" bson:"_id"`
 	Name      string        `json:"name" bson:"name"`
 	Content   string        `json:"content" bson:"content"`
 	Lang      Language      `json:"lang" bson:"lang"`
-	Tags      []Tag         `json: "tags" bson: "tags"`
+	Tags      []Tag         `json:"tags" bson:"tags"`
 	Len       int8          `json:"len" bson:"len"`
 	Owner     string        `json:"owner" bson:"owner"`
 	Status    int8          `json:"status" bson:"status"`
@@ -67,16 +73,19 @@ type Signin struct {
 type SpellCrt struct {
 	ID     bson.ObjectId `json:"_id"`
 	Name   string        `json:"name"`
-	Lang   Language      `json:"lang" binding: "required"`
-	Tags   []Tag         `json: "tags" bson: "tags"`
-	Spell  string        `json:"content" binding: "required"`
-	Status int8          `json:"status" binding: "required"`
+	Tags   []Tag         `json:"tags"`
+	Lang   Language      `json:"lang" binding:"required"`
+	Spell  string        `json:"content" binding:"required"`
+	Status int8          `json:"status" binding:"required"`
 }
 
 type SpellFetch struct {
 	ID bson.ObjectId `json:"id" binding:"required"`
 }
 type SpellsOfMine struct {
-	Page int8 `json:"page", binding: "required"`
-	Pgsz int8 `json:"pgsz", binding: "required"`
+	Tag   string `json:"tag" binding:"required"`
+	Lang  string `json:"lang" binding:"required"`
+	Sorts string `json:"sorts" binding:"required"`
+	Page  int8   `json:"page" binding:"required"`
+	Pgsz  int8   `json:"pgsz" binding:"required"`
 }

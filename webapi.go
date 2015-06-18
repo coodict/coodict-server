@@ -57,5 +57,9 @@ func main() {
 		spellAPI.POST("/delete", app.deleteSpell)
 	}
 	router.POST("/fetchSpell", app.fetchSpell)
+	router.POST("/test", app.test)
 	router.Run(":8080")
+}
+func (app *App) test(c *gin.Context) {
+	c.JSON(200, gin.H{"test": ""})
 }
