@@ -13,8 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var mySigningKey = "AVATQ!#@$#^%ASBA1354"
-
 // Helper funcs
 func genSalt(name string) string {
 	return genMd5(name)[:8]
@@ -37,7 +35,6 @@ func genUsrToken(u User) (string, error) {
 	token.Claims["spells"] = u.Spells
 	token.Claims["votes"] = u.Votes
 	token.Claims["date"] = u.CreateDate
-	token.Claims["tags"] = u.Tags
 
 	token.Claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	tokenString, err := token.SignedString([]byte(mySigningKey))

@@ -10,6 +10,11 @@ var (
 	STATUS_PUBLIC  int8 = 1
 	STATUS_PRIVATE int8 = 2
 	STATUS_DELETE  int8 = 3
+
+	GITHUB_CLIENT string = "a965d4ca2cd64c6d0859"
+	GITHUB_SECRET string = "0e06d7e7b3cef71b5ecb3c981a78d4bb76defc17"
+
+	mySigningKey string = "AVATQ!#@$#^%ASBA1354"
 )
 
 type Tag struct {
@@ -88,4 +93,10 @@ type SpellsOfMine struct {
 	Sorts string `json:"sorts" binding:"required"`
 	Page  int8   `json:"page" binding:"required"`
 	Pgsz  int8   `json:"pgsz" binding:"required"`
+}
+
+type GithubAccTokQuery struct {
+	ClintID   string `url:"client_id"`
+	ClientSrt string `url:"client_secret"`
+	Code      string `url:"code"`
 }

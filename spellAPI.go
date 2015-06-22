@@ -21,7 +21,7 @@ func (app *App) createSpell(c *gin.Context) {
 	var req SpellCrt
 	err := c.Bind(&req)
 	fmt.Printf("%+v", req)
-	if !err {
+	if err != nil {
 		c.JSON(200, gin.H{"code": 400, "msg": "参数错误！"})
 	} else {
 		var spell Spell
@@ -66,6 +66,15 @@ func (app *App) createSpell(c *gin.Context) {
 	}
 
 }
+func (app *App) square(c *gin.Context) {
+	var hots, news []Spell
+
+	query := bson.M{"status": STATUS_PUBLIC}
+
+	app.db.C("spell").Find(query).Sort("-views").Limit(10).All(&hots)
+	app.db.C("spell").Find(query).Sort("-timestamp").Limit(10).All(&news)
+	c.JSON(200, gin.H{"code": 200, "hots": hots, "news": news})
+}
 func (app *App) fetchSpell(c *gin.Context) {
 	vistor := getUserFromToken(mySigningKey, c)
 	var req SpellFetch
@@ -89,7 +98,7 @@ func (app *App) deleteSpell(c *gin.Context) {
 
 	var req SpellFetch
 	err := c.Bind(&req)
-	if !err {
+	if err != nil {
 		c.JSON(200, gin.H{"code": 400, "msg": "参数错误！"})
 		return
 	}

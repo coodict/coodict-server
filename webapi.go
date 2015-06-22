@@ -11,7 +11,7 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-var MOGODB_URI = "mongodb://127.0.0.1:27017/cobble"
+var MOGODB_URI = "mongodb://rainy:rainy123321@127.0.0.1:27017/cobble"
 
 type App struct {
 	g  *gin.Engine
@@ -57,9 +57,13 @@ func main() {
 		spellAPI.POST("/delete", app.deleteSpell)
 	}
 	router.POST("/fetchSpell", app.fetchSpell)
+	router.POST("/square", app.square)
+
 	router.POST("/test", app.test)
+	router.GET("/callback", app.githubAuth)
 	router.Run(":8080")
 }
 func (app *App) test(c *gin.Context) {
-	c.JSON(200, gin.H{"test": ""})
+	fmt.Println(c.PostForm("name"))
+	c.JSON(200, gin.H{"test": c.PostForm("name")})
 }
